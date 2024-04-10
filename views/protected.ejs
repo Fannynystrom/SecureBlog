@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dokument</title>
+ <link rel="stylesheet" type="text/css" href="/public/ejs-style.css">
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js" nonce="supersecret"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js" nonce="supersecret"></script>
+
+
+</head>
+
+
+
+<body>
+<div class="wrapper">
+ <header>
+      <img src="/img/Title.png" alt="">
+  </header> 
+
+
+
+  <div id="user-info-container">
+    <p> Välkommen <%= username%> <%= github %>!</p>
+  </div>
+
+
+
+
+  <nav class="nav">
+  <form id="logout-form" action="/logout" method="post">
+
+    <button  type="submit">Logga ut </button> 
+  </form>
+    <a href="#create-post-section">Skapa inlägg</a>
+
+  </nav>
+  
+
+
+  <div class="content">
+    <% blogPosts.forEach((post) => { %>
+      <div class="blog-post">
+        <h2><%= post.title %></h2>
+        <p><%= post.content.slice(0, 400) + '...' %></p>
+        <div class="full-content" style="display: none;"><%= post.content %></div>
+        <button class="toggle-button" onclick="toggleContent(this)">Visa mer</button>
+  
+        <div class="info">
+          <p id="fullPost<%= post.id %>" style="display: none;"><%= post.content %></p>
+          <p><b> Skapat av: <%= post.username %> den: <%= post.createdAt?.toLocaleString() %></b></p> 
+  
+
+          <button type="button" class="delete-post-btn" data-postid="<%= post.postId %>">Delete Post</button>
+          <button class="like-button" data-postid="<%= post.postId %> <%=post.username %>">Like</button>
+          <div id="notification-container" class="notification" style="display: none;">
+            <p id="notification-message"></p>
+          </div>
+          <div id="like-count-container">
+            <p>Likes: <span id="like-count"><%= post.likesCount %></span></p>
+            
+          </div>
+                </div>
+        
+         <!-- KOMMENTARER -->
+        <div class="comments-section">
+          <h3>Kommentarer:</h3>
+          <ul>
+            <% if (post.comments && JSON.parse(post.comments).length > 0) { %>
+              <% JSON.parse(post.comments).forEach((comment) => { %>
+                <li>
+                  <b><%= comment.username %>:</b> <%- comment.content %> <%= post.createdAt?.toLocaleString() %>
+                </li>
+              <% }); %>
+            <% } else { %>
+              <li>Ingen har kommenterat detta inlägg ännu.</li>
+            <% } %>
+          </ul>
+        </div>
+
+          <form action="/protected/post/<%= post.id %>/comment" method="post">
+
+            <input type="hidden" name="postId" value="<%= post.id %>" />
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+            <input type="text" name="content" placeholder="Add a comment..." required />
+            <button type="submit">Comment</button>
+          </form>
+        
+      </div>
+    <% }); %>
+  
+  
+
+   
+  
+  <div id="create-post-section" class="skapa">
+
+    
+    <form id="create-post-form" action="/protected/create-post" method="post">
+    <label for="title">Rubrik</label>
+
+    <input type="text" id="title" name="title" required>
+
+    <label for="content">Textinnehåll:</label>
+    <textarea id="content" name="content" required></textarea>
+
+    <br>
+    
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button id="skapa" type="submit">Skapa blogginlägg</button>
+
+  </form>
+</div>
+</div>
+
+
+
+
+
+
+  <script nonce="supersecret">
+      let likeCountElement; 
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const deleteButtons = document.querySelectorAll('.delete-post-btn');
+      const likeButtons = document.querySelectorAll('.like-button');
+      likeCountElement = document.getElementById('like-count'); 
+  
+      deleteButtons.forEach(function (button) {
+        button.addEventListener('click', async function (event) {
+          const postId = this.getAttribute('data-postid');
+          await deletePost(postId);
+        });
+      });
+  
+      likeButtons.forEach(button => {
+        button.addEventListener('click', async function () {
+          const postId = this.dataset.postid;
+          await likePost(postId);
+        });
+      });
+    });
+  
+    async function deletePost(postId) {
+      try {
+        const response = await fetch(`http://localhost:5005/protected/delete-post/${postId}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to delete post');
+        }
+  
+        window.location.reload();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  
+    async function likePost(postId) {
+      try {
+        // Check if the user has already liked the post
+        const hasLikedResponse = await fetch(`http://localhost:5005/hasLiked`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            postId: postId,
+          }),
+        });
+  
+        if (!hasLikedResponse.ok) {
+          throw new Error('Failed to check if the user has already liked the post');
+        }
+        const updatedLikes = await fetchLikesFromServer(postId);
+
+        const hasLiked = await hasLikedResponse.json();
+  
+        if (hasLiked) {
+          
+          alert('You have already liked this post');
+      return;     
+        }
+  
+        const likeResponse = await fetch(`http://localhost:5005/like`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            postId: postId,
+          }),
+        });
+  
+        if (!likeResponse.ok) {
+          throw new Error('Failed to like post');
+        }
+  
+        const updatedLikeCount = await likeResponse.json();
+  
+        // Uppdatera like count i UI
+        updateLikeCountUI(postId, updatedLikeCount.likesCount);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    // Funktion för att hämta likes från servern
+async function fetchLikesFromServer(postId) {
+  const likesResponse = await fetch(`http://localhost:5005/getLikes/${postId}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!likesResponse.ok) {
+    throw new Error('Failed to fetch likes from server');
+  }
+
+  const likesData = await likesResponse.json();
+  return likesData.likesCount || 0; // Returnera likesCount, eller 0 om det inte finns några likes
+}
+
+  
+
+    function updateLikeCountUI(postId, updatedLikeCount) {
+      const likeCountContainer = document.querySelector(`#like-count-container-${postId}`);
+  
+      if (likeCountContainer) {
+        const likeCountElement = likeCountContainer.querySelector('#like-count');
+  
+        if (likeCountElement) {
+          likeCountElement.textContent = updatedLikeCount;
+        }
+      }
+    }
+  
+    function showToast(message, likesCount) {
+      Toastify({
+        text: `${message} - Likes: ${likesCount}`,
+        duration: 3000,
+        destination: "https://github.com/apvarun/toastify-js",
+        newWindow: true,
+        close: true,
+        gravity: "center", // `top` or `bottom`
+        position: "left", // `left`, `center` or `right`
+        stopOnFocus: true,
+  
+        style: {
+          background: "linear-gradient(to right, #00b09b, #96c93d)",
+          height: 'fit-content',
+          marginTop: '900px',
+        },
+        offset: {
+          x: 400,
+          y: 10,
+        },
+      }).showToast();
+  
+      if (likeCountElement) {
+        likeCountElement.textContent = likesCount;
+      }
+    }
+  
+    function handleNotification(data) {
+      console.log('Received notification:', data);
+        showToast(data.message, data.likesCount);
+        updateLikeCountUI(data.postId, data.likesCount);
+    }
+  
+    const socket = io();
+  
+    socket.on('notification', handleNotification);
+  </script>
+  
+  </body>
+  </html>
+  
+
+  
+  
+
+            
+</body>
+</html>
+  

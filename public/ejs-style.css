@@ -1,0 +1,186 @@
+
+  body {
+    display: flex;
+    justify-content: center;
+    background: rgb(15, 95, 127);
+    
+}
+
+div.wrapper {
+  width: 1100px;
+  background: white;
+  box-shadow: 0px 0px 10px;
+  padding: 30px;
+  margin-top: 40px;
+}
+
+header {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  background: white;
+  width: 100%;
+  color: rgb(226, 220, 220);
+  padding-bottom: 10px;
+
+
+}
+
+nav.nav  {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  width: 250px;
+}
+nav.nav button {
+  border: none;
+  font-size: 19px;
+  background:none;
+  color: rgb(15, 95, 127);
+  margin: 10px;
+  font-family: 'Times New Roman', Times, serif;
+  border: 1px solid black;
+  padding: 5px;
+  background-color: rgba(128, 128, 128, 0.41);
+
+  
+}
+nav.nav a {
+  text-decoration: none;
+  color: rgb(15, 95, 127);
+  font-size: 19px;
+  font-family: 'Times New Roman', Times, serif;
+  border: 1px solid black;
+  padding: 5px;
+  background-color: rgba(128, 128, 128, 0.41);
+
+
+
+}
+
+
+
+
+ #user-info-container {
+  display: flex;
+  flex-direction: row;
+font-family: 'Times New Roman', Times, serif;
+font-size: 19px;
+  float: right;
+  color: darkblue;
+
+}
+
+
+
+div.skapa {
+  margin-top: 200px;
+  margin-left: 40px;
+}
+
+.content {
+  display: flex;
+flex-direction: column;
+  margin-top: 10px;
+  border-top: 1px solid black;
+  }
+
+.blog-post {
+  border: 2px solid black;
+  padding: 15px;
+  margin: 15px;
+  width: 1000px;
+  background: rgb(232, 230, 230);
+  line-height: 160%;
+  font-size: 17px;
+  font-family: 'Times New Roman', Times, serif;
+  
+}
+.info {
+  display: flex;
+}
+
+
+.content.notification {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: fit-content;
+}
+
+.skapa {
+  margin: 0 auto; 
+  padding: 20px; 
+  width: 900px;
+}
+
+
+#create-post-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
+button {
+  margin: 10px;
+}
+input,
+textarea {
+  padding: 8px;
+  margin-bottom: 10px;
+  width: 100%; 
+  box-sizing: border-box; 
+}
+#content {
+  height: 300px;
+  box-sizing: border-box; 
+  
+
+}
+#skapa {
+  background-color: #3498db;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  width: 250px;
+  display: flex;
+  justify-content: center;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+/* Kommentarer */
+    
+.comments {
+  
+  border: 1px solid #ccc; /* Lägg till en solid grå kant runt kommentarssektionen */
+   display: block;
+   width: 90%;
+  padding: 10px; /* Lägg till lite utfyllnad för att skapa avstånd från kanten */
+    margin-top: 20px; /* Lägg till ett toppmarginal för att separera kommentarssektionen från inlägget */
+  }
+  
+  /* Kommentera */
+  .comment {
+    
+    
+   
+  margin-bottom: 10px; /* Lägg till avstånd mellan enskilda kommentarer */
+  }
+
+  #kommentarer {
+    font-size: 22px;
+font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+
+  .comments-section {
+    margin-top: 40px;
+    border-top: 2px solid black;
+  }

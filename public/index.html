@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<link rel="stylesheet" href="/public/html-style.css">
+
+
+</head>
+<body>
+
+
+
+  <header>
+    <img src="/img/virus.png" alt="">
+    
+
+  </header>
+  <div class="wrapper">
+    <div class="logg">
+<div class="inloggning">
+
+        
+<form method="post" action="/login">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+
+          <h2 id="loggain">Logga in:</h2>
+          <label for="username">Användarnamn:</label>
+           <input type="text" id="username" name="username" autocomplete="username" required>
+
+           <br>
+           <label for="password">Lösenord:</label>
+           <input type="password" id="password" name="password" autocomplete="current-password" required>
+           <br>
+
+
+           <button type="submit">Logga in</button>
+         </form>
+
+         <a href="/auth/github">
+          <button type="submit">Logga in med GitHub</button>
+        </a>
+        </div>
+        <br>
+        <br>
+        <br>
+
+
+         <div class="registrera">
+         <form action="/register" method="post">
+
+          <h2>Registrera dig:</h2>
+
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+           <label for="newUsername">Nytt användarnamn:</label>
+           <input type="text" id="title" name="newUsername" autocomplete="off" required>
+           <br>
+           <label for="newPassword">Nytt lösenord:</label>
+           <input type="password" id="newPassword" name="newPassword" autocomplete="new-password" required>
+           <br>
+
+           <!-- <input type="hidden" name="_csrf" value="<%= csrfToken %>"> -->
+
+           <button type="submit">Registrera</button>
+        </form>
+      </div>
+      </div>
+    </div>
+
+
+<!-- 
+      <script nonce="supersecret"> 
+          // Hämta CSRF-token från servern och spara det i en variabel
+          let csrfToken;
+        
+          // Gör en fetch-begäran för att hämta CSRF-token från servern
+          fetch('/get-csrf-token')
+            .then(response => response.json())
+            .then(data => {
+              csrfToken = data.csrfToken;
+            })
+            .catch(error => {
+              console.error('Failed to fetch CSRF token:', error);
+            });
+        
+          // Använd csrfToken i dina AJAX-begäranden
+          fetch('/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'csrfToken': csrfToken
+            },
+            body: JSON.stringify({ /* ... */ })
+          });
+        </script>
+  
+      </script> --> -->
+</body>
+</html>
